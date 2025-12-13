@@ -11,7 +11,7 @@ public class ConflictDto {
     private LocalDate startConflict;
     private ConflictStatus status;
     private String description;
-    private Set<Integer> countrysId;
+    private Set<Integer> countryId;
 
     public int getId() {
         return id;
@@ -53,11 +53,11 @@ public class ConflictDto {
         this.description = description;
     }
 
-    public Set<Integer> getCountrysId() {
-        return countrysId;
+    public Set<Integer> getCountryId() {
+        return countryId;
     }
 
-    public void setCountrysId(Set<Integer> countrysId) {
-        this.countrysId = countrysId;
+    public void setCountryId(Set<Integer> countryId) {
+        this.countryId = countryId;
     }
 }

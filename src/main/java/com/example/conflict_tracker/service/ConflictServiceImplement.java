@@ -55,12 +55,13 @@ public class ConflictServiceImplement implements ConflictService {
         exists.setStatus(conflictDto.getStatus());
         exists.setDescription(conflictDto.getDescription());
 
-        Set<Country> countries = conflictDto.getCountrysId() == null ? Set.of() :
-                conflictDto.getCountrysId().stream()
+        List<Country> countries = conflictDto.getCountryId() == null ? List.of() :
+                conflictDto.getCountryId().stream()
                         .map(countryId -> countryRepository.findById(Long.valueOf(countryId))
-                                .orElseThrow(() -> new RuntimeException("Country not found")))
-                        .collect(Collectors.toSet());
-        exists.setCountries((List<Country>) countries);
+                                .orElseThrow(() -> new RuntimeException("Country not found: " + countryId)))
+                        .toList();
+
+        exists.setCountries(countries);
         Conflict save = conflictRepository.save(exists);
         return toDto(save);
     }
@@ -80,7 +81,7 @@ public class ConflictServiceImplement implements ConflictService {
         Set<Integer> countryIds = conflict.getCountries().stream()
                 .map(Country::getId)
                 .collect(Collectors.toSet());
-        dto.setCountrysId(countryIds);
+        dto.setCountryId(countryIds);
         return dto;
     }
     private Conflict toEntity(ConflictDto dto) {
@@ -89,12 +90,14 @@ public class ConflictServiceImplement implements ConflictService {
         conflict.setStartConflict(dto.getStartConflict());
         conflict.setStatus(dto.getStatus());
         conflict.setDescription(dto.getDescription());
-        if (dto.getCountrysId() != null) {
-            Set<Country> countries = dto.getCountrysId().stream()
-                    .map(id -> countryRepository.findById(Long.valueOf(id))
-                            .orElseThrow(() -> new RuntimeException("Country not found")))
-                    .collect(Collectors.toSet());
-            conflict.setCountries((List<Country>) countries);
+        if (dto.getCountryId() != null) {
+            List<Country> countries = dto.getCountryId() == null ? List.of() :
+                    dto.getCountryId().stream()
+                            .map(id -> countryRepository.findById(Long.valueOf(id))
+                                    .orElseThrow(() -> new RuntimeException("Country not found: " + id)))
+                            .toList();
+
+            conflict.setCountries(countries);
         }
         return conflict;
     }
